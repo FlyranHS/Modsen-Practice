@@ -1,31 +1,30 @@
-
-function asyncOperation(value) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            console.log(`Operation with value: ${value}`);
-            resolve(value + 1);
-        }, 1000);
-    });
-}
-
-function executeSequentially(initialValue, operations) {
-    let promise = Promise.resolve(initialValue);
-    for (let operation of operations) {
-        promise = promise.then(operation);
-    }
-    return promise;
-}
-
-const operations = [
-    (val) => asyncOperation(val),
-    (val) => asyncOperation(val),
-    (val) => asyncOperation(val)
-];
-
-executeSequentially(0, operations)
-    .then(finalValue => {
-        console.log(`Final value: ${finalValue}`);
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  function squareAfterDelay(value) {
+    return delay(3000).then(() => value * value);
+  }
+  
+  const initialPromise = Promise.resolve(2);
+  
+  initialPromise
+    .then(result => {
+      console.log(`Первый результат: ${result}`); // 2
+      return squareAfterDelay(result);
+    })
+    .then(result => {
+      console.log(`Второй результат (первый в квадрате): ${result}`); // 4
+      return squareAfterDelay(result);
+    })
+    .then(result => {
+      console.log(`Третий результат (второй в квадрате): ${result}`); // 16
+      return squareAfterDelay(result);
+    })
+    .then(result => {
+      console.log(`Четвертый результат (третий в квадрате): ${result}`); // 256
     })
     .catch(error => {
-        console.error(`Error: ${error}`);
+      console.error(`Ошибка: ${error}`);
     });
+  
